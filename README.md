@@ -1,4 +1,4 @@
-# plugin-integrator-sqlite
+# plugin-platform-sqlite
 
 SQLite for [Liminal](https://github.com/pcxmac-dev/liminal-charts): the data folder's SQLite files as an
 instance of their own, with new files and files elsewhere beside it, each shared with another system's suite as you
@@ -6,10 +6,12 @@ set it.
 
 ## What a database plugin is
 
-A Liminal plugin of the integrator's (plugin API 2.3, `liminal_libs.storage.databases`): one engine's. It holds
+A Liminal plugin of the platform's (plugin API 2.3, `liminal_libs.storage.databases`), drawn in its Databases
+section: one engine's. It holds
 **instances**. An instance is a database the plugin made, or a connection to one that exists, and each has its own
 configuration: what it holds, where it is, the method it is reached by, its port, who else may attach and how far,
-and on a server the role used there. The integrator's Databases view lists them, tests them and changes them.
+and on a server the role used there. The platform's Databases section lists them, tests them and changes them;
+the integrator and the charts include the platform and open them in their own process.
 
 - **With nothing set, nothing changes.** The plugin's own instance is what the app keeps in this engine today, where
   it is and opened as it is.
@@ -22,13 +24,17 @@ and on a server the role used there. The integrator's Databases view lists them,
 ## Installing
 
 The app finds it through the entry point group `liminal.providers` and lists it as `package:
-plugin-integrator-sqlite`, with this package's version; a checkout in the workspace's `plugins/` folder is loaded
-from there. It needs `liminal-libs` 1.61.0 or newer.
+plugin-platform-sqlite`, with this package's version; a checkout in the workspace's `plugins/` folder is loaded
+from there. It needs `liminal-libs` 1.90.0 or newer.
 
 ```
 python -m pip install -e ".[dev]"
 python -m pytest -q
 ```
+
+It was `plugin-integrator-sqlite` (0.1.x) until 0.2.0. The plugin's name is still `sqlite`, so every instance kept
+under `SQLITE_INSTANCES` and every kept sign-in stays as it was. Only one of the two may be installed or in
+`plugins/`: the registry refuses a second plugin for one engine.
 
 The tests open only files of their own (real SQLite files in a temporary folder, the link's helper as a thread of the test); one of them reads the makers' documentation pages, and only with
 `LIMINAL_VENDOR_PAGES=1`.

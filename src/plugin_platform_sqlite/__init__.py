@@ -1,5 +1,6 @@
 """SQLite for Liminal: the data folder's SQLite files as an instance of their own, new files and files elsewhere
-beside it (a database plugin, plugin API 2.3: liminal_libs.storage.databases).
+beside it (a database plugin, plugin API 2.3: liminal_libs.storage.databases; the platform's,
+drawn in its Databases section, since 0.2.0: it was plugin-integrator-sqlite).
 
 The user, 2026-11-15: "for the integrator i need plugins for each type of database and in each plugin can setup either
 new databases or connections to existing databases using many different types of IP or IPC methods. each instance in
@@ -32,7 +33,7 @@ from liminal_libs.storage.databases import DATA, SUFFIXES, DatabasePlugin, Insta
 
 from .apis import APIS, SQLITE
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 TIMEOUT_S = 5.0  # how long an open waits for a lock, as the app's own
 MARKER = "liminal_instance"  # the table a database made here says what it is in
 FOLDERS = ("feeds", "datasets", "gov", "login", "backups", "instances")  # the data folder's own, in the order they are said
@@ -158,7 +159,7 @@ class SqlitePlugin(DatabasePlugin):
             conn.execute(f"CREATE TABLE {MARKER} (key TEXT PRIMARY KEY, value TEXT) WITHOUT ROWID")
             conn.executemany(f"INSERT INTO {MARKER} VALUES (?, ?)", [
                 ("name", instance.name), ("made", instance.at or now_iso()), ("holds", ",".join(instance.holds)),
-                ("by", f"plugin-integrator-sqlite {__version__}")])
+                ("by", f"plugin-platform-sqlite {__version__}")])
             conn.commit()
         except Exception:
             conn.close()

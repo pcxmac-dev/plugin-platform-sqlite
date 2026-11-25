@@ -14,7 +14,7 @@ from liminal_libs import mounts
 from liminal_libs.apps import EnvironmentLogin
 from liminal_libs.storage import link as lk
 from liminal_libs.storage.databases import Instance, Refusal, Share
-from plugin_integrator_sqlite import DATABASE, MARKER, SqlitePlugin, __version__, counted
+from plugin_platform_sqlite import DATABASE, MARKER, SqlitePlugin, __version__, counted
 
 
 def table(path, name="kv") -> None:
@@ -93,7 +93,7 @@ def test_a_new_database_is_in_write_ahead_logging_and_says_what_it_is(sqlite, tm
         assert raw.execute("PRAGMA journal_mode").fetchone() == ("wal",)
         said = dict(raw.execute(f"SELECT key, value FROM {MARKER}"))
     raw.close()
-    assert said["name"] == "archive" and said["holds"] == "bars,ticks" and said["by"] == f"plugin-integrator-sqlite {__version__}"
+    assert said["name"] == "archive" and said["holds"] == "bars,ticks" and said["by"] == f"plugin-platform-sqlite {__version__}"
     assert said["made"] == plugin.instance("archive").at and not path.with_name("archive.db-wal").exists()
     tested = plugin.test("archive")
     assert tested["ok"] and tested["lines"][1] == "archive.db: 1 table, journal mode wal, schema version 0"
@@ -117,7 +117,7 @@ def test_a_new_database_is_in_write_ahead_logging_and_says_what_it_is(sqlite, tm
             plugin.new_database(*args)
     assert [i["name"] for i in json.loads(env["SQLITE_INSTANCES"])["instances"]] == ["archive", "second"]
     # one that fails while it is made leaves no half-made file: the next try starts clean
-    monkeypatch.setattr("plugin_integrator_sqlite.now_iso", lambda: 1 / 0)
+    monkeypatch.setattr("plugin_platform_sqlite.now_iso", lambda: 1 / 0)
     with pytest.raises(ZeroDivisionError):
         plugin.make(Instance("half", where="instances/half.db"), data)
     assert not list((data / "instances").glob("half.db*"))
